@@ -38,6 +38,8 @@ use FMB\Pages\MemberPage;
 
 Core::loadFile('src/pages/MemberPage.class.php');
 
-$page =& new MemberPage();
+$GLOBALS['fmbSitePage'] = true;
+
+$page = new MemberPage();
 $page->printMember($_GET['id']);
 ?>

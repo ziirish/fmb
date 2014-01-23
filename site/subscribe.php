@@ -38,7 +38,9 @@ use FMB\Pages\SubscribePage;
 
 Core::loadFile('src/pages/SubscribePage.class.php');
 
-$page =& new SubscribePage();
+$GLOBALS['fmbSitePage'] = true;
+
+$page = new SubscribePage();
 
 // Default action : Subscribe from home page.
 $action = (isset($_REQUEST['action'])) ? $_REQUEST['action'] : 'subscribe';
@@ -47,10 +49,10 @@ $redirection = (isset($_REQUEST['from'])) ? $_REQUEST['from'] : 'home';
 // Prepare redirection
 switch ($redirection) {
     case 'blog' : {
-        $redirection = 'blog/index.php';
+        $redirection = $fmbConf['blog']['url'];
     } break;
     default :
-        $redirection = 'index.php';
+        $redirection = $fmbConf['site']['url'];
 }
 
 // Execute action

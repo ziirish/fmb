@@ -38,7 +38,9 @@ use FMB\Pages\LoginPage;
 
 Core::loadFile('src/pages/LoginPage.class.php');
 
-$page =& new LoginPage();
+$GLOBALS['fmbSitePage'] = true;
+
+$page = new LoginPage();
 
 // Default action : Login from home page.
 $action = (isset($_REQUEST['action'])) ? $_REQUEST['action'] : 'login';
@@ -47,10 +49,10 @@ $redirection = (isset($_REQUEST['from'])) ? $_REQUEST['from'] : 'home';
 // Prepare redirection
 switch ($redirection) {
     case 'blog' : {
-        $redirection = 'blog/index.php';
+        $redirection = $fmbConf['blog']['url'];
     } break;
     default :
-        $redirection = 'index.php';
+        $redirection = $fmbConf['site']['url'];
 }
 
 // Execute action
