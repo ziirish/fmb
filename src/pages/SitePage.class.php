@@ -60,7 +60,6 @@ Core::loadFile('src/pages/Page.class.php');
  */
 class SitePage extends Page
 {
-
     public function __construct()
     {
         parent::__construct('site');
@@ -83,6 +82,18 @@ class SitePage extends Page
         $this->tpl->assign('fmbBlogUrl', $fmbConf['blog']['url']);
         $this->tpl->assign('fmbTemplatesUrl', $fmbConf['themes_url']);
         $this->tpl->assign('fmbStyle', $this->style);
+        $this->tpl->assign('fmbIsAdmin', User::isAdmin());
+        $this->tpl->assign('fmbIsLogged', User::isLogged());
+
+        $categories = $this->db->query(
+            'SELECT * '.
+            'FROM fmb_blog_categories '.
+            'ORDER BY cat_id',
+            array(),
+            DBPlugin::SQL_QUERY_ALL
+        ) ? $this->db->getSQLResult() : array();
+
+        $this->tpl->assign('fmbBlogCategories', $categories);
         if (!is_null($redirectURL)) {
             $this->tpl->assign('fmbRedirect', $redirectURL);
         }
@@ -105,6 +116,7 @@ class SitePage extends Page
     public function printFooter()
     {
         $this->tpl->assign('fmbGenerationTime', Core::getTime());
+        $this->tpl->display($this->style.'/site/fmb.menu.tpl');
         $this->tpl->display($this->style.'/site/fmb.footer.tpl');
     }
 
