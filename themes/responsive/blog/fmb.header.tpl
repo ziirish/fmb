@@ -110,7 +110,7 @@
             </nav>
             <div class="border"></div>
         </div>
-        <a class="scrolltop scrollableLink" href="#main"><span>up</span></a>
+        <a class="scrolltop scrollableLink" href="#main"><span><i class="fa fa-chevron-up fa-lg"></i></span></a>
         <div class="ink-grid vspace">
             <div class="blog">
             <div id="main" class="column-group hide-small">
