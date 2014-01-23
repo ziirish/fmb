@@ -79,6 +79,8 @@ interface TemplatePluginInterface
      * @return string Rendered template output.
      */
     public function fetch($template, $cacheID, $compileID, $display);
+
+    public function append($varname, $var=null);
 }
 
 ?>
