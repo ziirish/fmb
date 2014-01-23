@@ -43,7 +43,9 @@ $fmbConf['site']['slogan'] = 'My Portal Slogan.';
 
 // Themes
 $fmbConf['themes_url'] = $fmbConf['url'].'themes/';
-$fmbConf['style'] = 'default';
+$fmbConf['style'] = 'responsive';
+// Fallback style for dummy browser...
+$fmbConf['fallback'] = 'default';
 
 // Blog
 $fmbConf['blog']['url'] = $fmbConf['site']['url'].'blog/';
@@ -51,12 +53,14 @@ $fmbConf['blog']['title'] = 'My Blog Title';
 $fmbConf['blog']['slogan'] = 'My Blog Slogan.';
 $fmbConf['blog']['lastposts'] = 5;                                   // Optional
 
+$GLOBALS['salt'] = 'e8g23ff460a6gfdkc1d725cbf902a76acf06f4f8';
+
 // Plugins ---------------------------------------------------------------------
 // Database plugin
 $fmbConf['monsterdb']['protocol'] = 'pgsql';
 $fmbConf['monsterdb']['user'] = '<user>';
 $fmbConf['monsterdb']['password'] = '<password>';
-$fmbConf['monsterdb']['host'] = '<host>';
+$fmbConf['monsterdb']['host'] = 'tcp(x.x.x.x:1234)';
 $fmbConf['monsterdb']['db_name'] = '<database>';
 
 // Template plugin
@@ -68,8 +72,43 @@ $fmbConf['skittle']['cache_dir'] = '/path/to/plugins/Skittle/cache';
 $fmbConf['baby']['url'] = $fmbConf['themes_url'].$fmbConf['style'].'/';
 $fmbConf['baby']['player'] = 'zplayer.swf';
 
+// Caching plugin
+$fmbConf['meuhcache']['server'] = '<server>';
+$fmbConf['meuhcache']['port'] = <port>;
+$fmbConf['meuhcache']['dbexpire'] = 0;    // (in second) 0 means never expire (note: the memcache is flushed every time you do an INSERT, DELETE ou UPDATE in database)
+$fmbConf['meuhcache']['expire'] = 0;      // (in second) 0 means never expire
+$fmbConf['meuhcache']['prefix'] = 'prod';
+
 // Build enabled plugins list
 $fmbConf['plugins']['database'] = array ('MonsterDB');
 $fmbConf['plugins']['template'] = array ('Skittle');
-$fmbConf['plugins']['formatting'] = array ('Baby');
+$fmbConf['plugins']['caching'] = array ('Meuhcache');
+$fmbConf['plugins']['login'] = array ('LDAP');
+$fmbConf['plugins']['template_extend'] = array ('YepNope','NiceURL','IdenticonPlugin','highlightjs','ClaudeTag','thumb','jQuery','Hallo','AutoSize','FancyBox','Select2','Upload','Viewer','Lazy','Piwik','Scroll');
+$fmbConf['plugins']['formatting'] = array ('ReadMore', 'Baby', 'Daddy', 'TeX', 'Markdown');
+$fmbConf['plugins']['captcha'] = array ('FMB_Securimage');
+
+// theme of the highlightjs plugin
+$fmbConf['highlightjs']['theme'] = 'tomorrow-night';
+
+// daddy options
+$fmbConf['daddy']['remap'] = '^(https?://)?(www\.|blog\.)?example\.com/?(.+)$';
+$fmbConf['daddy']['catch'] = 3;
+$fmbConf['daddy']['images_dir'] = 'pictures/';
+$fmbConf['daddy']['attach_dir'] = 'documents/';
+$fmbConf['daddy']['use_handler'] = true;
+$fmbConf['daddy']['rewrite_handler'] = 'blog/get-%t-%f';
+$fmbConf['daddy']['cache_images'] = true;
+$fmbConf['daddy']['lightbox'] = 'FancyBox';
+$fmbConf['daddy']['viewer'] = 'Viewer';
+
+$fmbConf['jquery']['adminonly'] = false;
+
+// thumb options
+$fmbConf['thumb']['autoreduce'] = 600;
+
+$fmbConf['ldap']['host'] = 'ldaps://ldap.master.example.org';
+$fmbConf['ldap']['connect_string'] = 'uid=%u,ou=People,dc=example,dc=org';
+$fmbConf['ldap']['filter'] = '(&(activeaccount=1)(webaccount=1)(|(uid=%u)(mail=%u)))';
+$fmbConf['ldap']['base'] = 'ou=users,dc=example,dc=org';
 ?>
