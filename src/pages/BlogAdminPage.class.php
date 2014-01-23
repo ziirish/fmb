@@ -61,6 +61,8 @@ Core::loadFile('src/pages/Page.class.php');
 class BlogAdminPage extends Page
 {
 
+    private $menu = '';
+
     public function __construct()
     {
         parent::__construct('blog');
@@ -83,6 +85,8 @@ class BlogAdminPage extends Page
         $this->tpl->assign('fmbBlogUrl', $fmbConf['blog']['url']);
         $this->tpl->assign('fmbTemplatesUrl', $fmbConf['themes_url']);
         $this->tpl->assign('fmbStyle', $this->style);
+        $this->tpl->assign('fmbIsAdmin', User::isAdmin());
+        $this->tpl->assign('fmbAdminPage', true);
         if (!is_null($redirectURL)) {
             $this->tpl->assign('fmbRedirect', $redirectURL);
         }
@@ -99,6 +103,7 @@ class BlogAdminPage extends Page
 
         $this->tpl->assign('fmbSlogan', $fmbConf['blog']['slogan']);
         $this->tpl->assign('fmbPageTitle', $pageTitle);
+        $this->menu = $this->getMenu();
         $this->tpl->display($this->style.'/blog/fmb.header.tpl');
     }
 
@@ -130,7 +135,7 @@ class BlogAdminPage extends Page
      */
     public function printMenu()
     {
-        print($this->getMenu());
+        print($this->menu);
     }
 
     /**
@@ -138,6 +143,18 @@ class BlogAdminPage extends Page
      */
     public function getMenu()
     {
+        $categories = $this->db->query(
+            'SELECT * '.
+            'FROM fmb_blog_categories '.
+            'ORDER BY cat_id',
+            array(),
+            DBPlugin::SQL_QUERY_ALL
+        ) ? $this->db->getSQLResult() : array();
+
+        $this->tpl->assign('fmbIsLogged', User::isLogged());                                                                                                                                                                     
+        $this->tpl->assign('fmbIsAdmin', User::isAdmin());
+        $this->tpl->assign('fmbBlogCategories', $categories);
+
         return $this->tpl->fetch($this->style.'/blog/admin/fmb.menu.tpl');
     }
 
@@ -538,6 +555,17 @@ class BlogAdminPage extends Page
             if (!empty($_POST['id'])) {
                 // Modifying
                 $fmbPost = $this->getPosts($_POST['id']);
+                // Format post
+                if ($this->plugEng->existPluginOfType('formatting')) {
+                    $tmpArray = array($fmbPost['post_body'], true);
+                    $tmpText = $this->plugEng->doHookFunction('format', $tmpArray);
+                    $fmbPost['post_body_formated'] = $tmpText;
+    /*                
+                    $tmpArray = array($post['post_more'], true);
+                    $tmpText = $this->plugEng->doHookFunction('format', $tmpArray);
+                    $post['post_more'] = $tmpText;
+     */
+                }
             } else {
                 // Adding
 
@@ -710,11 +738,9 @@ class BlogAdminPage extends Page
      */
     private function checkPostAdd($update)
     {
+        list($day, $month, $year) = explode('/', $_POST['date']);
         if (empty($_POST['title'])
             || empty($_POST['body'])
-            || empty($_POST['year'])
-            || empty($_POST['month'])
-            || empty($_POST['day'])
             || empty($_POST['h'])
             || empty($_POST['m'])
             || empty($_POST['s'])
@@ -726,11 +752,8 @@ class BlogAdminPage extends Page
         } else if (!is_numeric($_POST['h'])
                    || !is_numeric($_POST['m'])
                    || !is_numeric($_POST['s'])
-                   || !is_numeric($_POST['month'])
-                   || !is_numeric($_POST['day'])
-                   || !is_numeric($_POST['year'])
                    || !$this->checktime($_POST['h'], $_POST['m'], $_POST['s']) 
-                   || !checkdate($_POST['month'], $_POST['day'], $_POST['year'])
+                   || !checkdate($month, $day, $year)
                   ) {
             // Invalid date or hour
             return 2;
@@ -739,7 +762,8 @@ class BlogAdminPage extends Page
             $title = $_POST['title'];
             $body = $_POST['body'];
             $more = $_POST['more'];
-            $date = $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day'].' ';
+            $date = $year.'-'.$month.'-'.$day.' ';
+//            $date = $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day'].' ';
             $date .= $_POST['h'].':'.$_POST['m'].':'.$_POST['s'];
             $closed = (isset($_POST['closed']) && ($_POST['closed'])) ? 't' : 'f';
             $draft = (isset($_POST['draft']) && ($_POST['draft'])) ? 't' : 'f';
@@ -771,7 +795,8 @@ class BlogAdminPage extends Page
                 ) ? 0 : 3;
             } else {
                 // Adding a post.
-                return (
+                $ret = 
+                 (
                     $this->db->query(
                         'INSERT INTO fmb_blog_posts ' .
                         '(post_title, post_body, ' .
@@ -790,6 +815,69 @@ class BlogAdminPage extends Page
                         DBPlugin::SQL_QUERY_MANIP
                     )
                 ) ? 0 : 3;
+                if (0 === $ret && isset($_POST['sel-tags'])) {
+                    $id = $this->db->query(
+                        'SELECT post_id '.
+                        'FROM fmb_blog_posts '.
+                        'WHERE '.
+                        'post_title = ? AND '.
+                        'post_time = ? AND '.
+                        'post_cat = ? AND '.
+                        'post_mem = ?',
+                        array($title,
+                              $date,
+                              $category,
+                              $userID),
+                        DBPlugin::SQL_QUERY_FIRST
+                    ) ? $this->db->getSQLResult()
+                    : null;
+
+                    if (null !== $id) {
+                        $tags = $_POST['sel-tags'];
+                        $query = 'INSERT INTO fmb_blog_tags_rel '.                                                                                                                                                                               
+                                 '(post_id, tag_id) VALUES ';
+                        $values = array();
+                        foreach (explode(',',$tags[0]) as $k => $t) {
+                            if (is_numeric($t)) {
+                                $r = $this->db->query(
+                                    'SELECT tag_id '.
+                                    'FROM fmb_blog_tags '.
+                                    'WHERE tag_id = ?',
+                                    array($t),
+                                    DBPlugin::SQL_QUERY_FIRST)
+                                    ? $this->db->getSQLResult()
+                                    : null;
+                            } else {
+                                $r = null;
+                            }   
+                            if (null === $r) {
+                                $this->db->query(
+                                    'INSERT INTO fmb_blog_tags '.
+                                    '(tag_title, tag_desc) VALUES '.
+                                    '(?, ?)',
+                                    array($t, $t),
+                                    DBPlugin::SQL_QUERY_MANIP);
+                                $r = $this->db->query(
+                                    'SELECT tag_id '.
+                                    'FROM fmb_blog_tags '.
+                                    'WHERE tag_title = ?',
+                                    array($t),
+                                    DBPlugin::SQL_QUERY_FIRST)
+                                    ? $this->db->getSQLResult()
+                                    : array();
+                            }   
+                            $query .= '(?,?),';
+                            array_push($values, $id['post_id'], $r['tag_id']);
+                        }   
+                        $query = substr($query, 0, strlen($query)-1);
+                        $this->db->query(
+                            $query,
+                            $values,
+                            DBPlugin::SQL_QUERY_MANIP);
+                    }
+
+                }
+                return $ret;
             }
         }
     }
