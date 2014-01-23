@@ -66,6 +66,7 @@ require_once(FMB_PATH.'src/core/Core.class.php');
 Core::loadFile('src/inc/i18n.inc.php');
 Core::loadFile('src/core/Singleton.class.php', true);
 Core::loadFile('src/core/User.class.php', true);
+Core::loadFile('src/core/UploadHandler.class.php', true);
 Core::loadFile('src/plugins/PluginEngine.class.php', true);
 
 $fmbPluginEngine = PluginEngine::getInstance();
