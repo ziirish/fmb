@@ -111,6 +111,7 @@ abstract class Page implements PageInterface
         if (null != $this->tpl && null != $this->db && $this->plugEng->existPluginOfType('template_extend')) {
             $tmpArray = array($this->tpl, $this->db);
             $this->plugEng->doHookFunction('extend', $tmpArray);
+            $this->plugEng->doHookFunction('post_extend', $tmpArray);
         }
 
         if (isset($fmbConf['style']) && !empty($fmbConf['style'])) {
@@ -118,6 +119,13 @@ abstract class Page implements PageInterface
         } else {
             $this->style = 'default';
         }
+        if (preg_match('/MSIE /', $_SERVER['HTTP_USER_AGENT'])) {
+            $browser = get_browser(null, true);
+            if ($browser['browser'] === 'IE' && $browser['majorver'] < 9) {
+                $this->style = isset($fmbConf['fallback']) ? $fmbConf['fallback'] : 'default';
+            }
+        }
+        $this->tpl->assign('fmbVersion', FMB_VERSION);
     }
 
     /**
