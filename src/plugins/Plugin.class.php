@@ -40,7 +40,7 @@
  * @package FMB
  * @subpackage Plugins
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  */
 namespace FMB\Plugins;
 use FMB\Core\Core;
@@ -55,7 +55,7 @@ Core::loadFile('src/plugins/Plugin.interface.php', true);
  * @package FMB
  * @subpackage Plugins
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  * @see PluginInterface
  * @abstract
  */

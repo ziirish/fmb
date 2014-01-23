@@ -39,7 +39,7 @@
  * @package FMB
  * @subpackage Pages
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  */
 namespace FMB\Pages;
 use FMB\Core\Core;
@@ -55,7 +55,7 @@ Core::loadFile('src/pages/Page.interface.php', true);
  * @package FMB
  * @subpackage Pages
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  * @abstract
  */
 abstract class Page implements PageInterface

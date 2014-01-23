@@ -39,7 +39,7 @@
  * @package FMB
  * @subpackage Inc
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  */
  
 // Set default locale

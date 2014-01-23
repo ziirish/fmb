@@ -39,7 +39,7 @@
  * @package FMB
  * @subpackage Core
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  */
 namespace FMB\Core;
 
@@ -49,7 +49,7 @@ namespace FMB\Core;
  * @package FMB
  * @subpackage Core
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  * @abstract
  */
 abstract class User

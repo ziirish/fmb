@@ -39,7 +39,7 @@
  * @package FMB
  * @subpackage Pages
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  */
 namespace FMB\Pages;
 use FMB\Core\Core;
@@ -56,7 +56,7 @@ Core::loadFile('src/pages/SitePage.class.php');
  * @package FMB
  * @subpackage Pages
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  */
 class LoginPage extends SitePage
 {

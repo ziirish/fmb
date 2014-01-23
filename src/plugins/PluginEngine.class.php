@@ -40,7 +40,7 @@
  * @package FMB
  * @subpackage Plugins
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  */
 namespace FMB\Plugins;
 use FMB\Core\Core;
@@ -52,7 +52,7 @@ use FMB\Core\Singleton;
  * @package FMB
  * @subpackage Plugins
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  */
 class PluginEngine extends Singleton
 {

@@ -15,7 +15,7 @@ Core::loadFile('src/pages/Page.class.php');
  * @package FMB
  * @subpackage Pages
  * @author Ziirish <ziirish@ziirish.info>
- * @version 0.1b
+ * @version O.1c
  */
 class BlogRss extends Page
 {

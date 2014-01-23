@@ -5,7 +5,7 @@
  * @package FMB
  * @subpackage Pages
  * @author Benjamin SANS <ziirish@ziirish.info>
- * @version 0.1b
+ * @version O.1c
  */
 namespace FMB\Pages;
 use FMB\Core\Core;
@@ -21,7 +21,7 @@ Core::loadFile('src/pages/WS.interface.php', true);
  * @package FMB
  * @subpackage Pages
  * @author Benjamin SANS <ziirish@ziirish.info>
- * @version 0.1b
+ * @version O.1c
  * @abstract
  */
 abstract class WS implements WSInterface

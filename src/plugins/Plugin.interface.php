@@ -40,7 +40,7 @@
  * @package FMB
  * @subpackage Plugins
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  */
 namespace FMB\Plugins;
 
@@ -50,7 +50,7 @@ namespace FMB\Plugins;
  * @package FMB
  * @subpackage Plugins
  * @author Lenain <lenaing@gmail.com>
- * @version 0.1b
+ * @version O.1c
  */
 interface PluginInterface
 {

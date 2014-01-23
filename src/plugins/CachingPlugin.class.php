@@ -40,7 +40,7 @@
  * @package FMB
  * @subpackage Plugins
  * @author Ziirish <ziirish@ziirish.info>
- * @version 0.1b
+ * @version O.1c
  */
 namespace FMB\Plugins;
 use FMB\Core\Core;
@@ -57,7 +57,7 @@ Core::loadFile('src/plugins/CachingPlugin.interface.php', true);
  * @package FMB
  * @subpackage Plugins
  * @author Ziirish <ziirish@ziirish.info>
- * @version 0.1b
+ * @version O.1c
  * @abstract
  */
 abstract class CachingPlugin extends Plugin implements CachingPluginInterface
