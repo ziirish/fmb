@@ -39,7 +39,9 @@ use FMB\Pages\BlogAdminPage;
 
 Core::loadFile('src/pages/BlogAdminPage.class.php');
 
-$admin =& new BlogAdminPage();
+$GLOBALS['fmbAdminPage'] = true;
+
+$admin = new BlogAdminPage();
 
 // Check authorization
 if (!User::isLogged() || !User::isAdmin()) {
