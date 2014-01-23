@@ -40,7 +40,7 @@
  * @package FMB
  * @subpackage Plugins
  * @author Lenain <lenaing@gmail.com>
- * @version O.1c
+ * @version 0.1c
  */
 namespace FMB\Plugins;
 use FMB\Core\Core;
@@ -57,7 +57,7 @@ Core::loadFile('src/plugins/TemplatePlugin.interface.php', true);
  * @package FMB
  * @subpackage Plugins
  * @author Lenain <lenaing@gmail.com>
- * @version O.1c
+ * @version 0.1c
  * @abstract
  */
 abstract class TemplatePlugin extends Plugin implements TemplatePluginInterface

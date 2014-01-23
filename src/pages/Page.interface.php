@@ -40,7 +40,7 @@
  * @package FMB
  * @subpackage Pages
  * @author Lenain <lenaing@gmail.com>
- * @version O.1c
+ * @version 0.1c
  */
 namespace FMB\Pages;
 
@@ -50,7 +50,7 @@ namespace FMB\Pages;
  * @package FMB
  * @subpackage Pages
  * @author Lenain <lenaing@gmail.com>
- * @version O.1c
+ * @version 0.1c
  */
 interface PageInterface
 {

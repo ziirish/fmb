@@ -40,7 +40,7 @@
  * @package FMB
  * @subpackage Core
  * @author Lenain <lenaing@gmail.com>
- * @version O.1c
+ * @version 0.1c
  */
 namespace FMB\Core;
 
@@ -52,7 +52,7 @@ namespace FMB\Core;
  * @package FMB
  * @subpackage Core
  * @author Lenain <lenaing@gmail.com>
- * @version O.1c
+ * @version 0.1c
  * @abstract
  */
 abstract class Core

@@ -39,7 +39,7 @@
  * @package FMB
  * @subpackage Pages
  * @author Lenain <lenaing@gmail.com>
- * @version O.1c
+ * @version 0.1c
  */
 namespace FMB\Pages;
 use FMB\Core\Core;
@@ -56,7 +56,7 @@ Core::loadFile('src/pages/Page.class.php');
  * @package FMB
  * @subpackage Pages
  * @author Lenain <lenaing@gmail.com>
- * @version O.1c
+ * @version 0.1c
  */
 class BlogPage extends Page
 {

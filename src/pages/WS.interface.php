@@ -5,7 +5,7 @@
  * @package FMB
  * @subpackage Pages
  * @author Benjamin SANS <ziirish@ziirish.info>
- * @version O.1c
+ * @version 0.1c
  */
 namespace FMB\Pages;
 
@@ -15,7 +15,7 @@ namespace FMB\Pages;
  * @package FMB
  * @subpackage Pages
  * @author Benjamin SANS <ziirish@ziirish.info>
- * @version O.1c
+ * @version 0.1c
  */
 interface WSInterface
 {

@@ -42,7 +42,7 @@
  * @package FMB
  * @subpackage Core
  * @author Lenain <lenaing@gmail.com>
- * @version O.1c
+ * @version 0.1c
  */
 use FMB\Core\Core;
 use FMB\Plugins\PluginEngine;
@@ -59,7 +59,7 @@ define('FMB_PATH', $dirname.'/');
  * FMB_VERSION is, ow... nevermind.
  * @var string FMB version.
  */
-define('FMB_VERSION', 'O.1c');
+define('FMB_VERSION', '0.1c');
 
 require_once(FMB_PATH.'config/config.inc.php');
 require_once(FMB_PATH.'src/core/Core.class.php');
