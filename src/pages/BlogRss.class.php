@@ -26,14 +26,14 @@ class BlogRss extends Page
         $this->title = _('RSS');
     }
 
-    public function sendRSS($type){
+    public function sendRSS($type, $full){
         global $fmbConf;
 
         header("Content-Type: application/rss+xml");
 
         $mem = PluginEngine::getCachingPlugin();
         if (null !== $mem) {
-	    $key = md5('fmb_blog_rss_'.$type);
+	    $key = md5('fmb_blog_rss_'.$type.$full);
 	    $res = $mem->get($key);
             if (null !== $res) {
 	        $this->tpl->assign('fmbTitle', $fmbConf['blog']['title']);
@@ -82,7 +82,7 @@ class BlogRss extends Page
                 ") AS T on T.com_post = P.post_id " .
                 "WHERE P.post_draft = FALSE " .
                 "ORDER BY P.post_time DESC " .
-                "LIMIT 7",
+                ($full ? '' : "LIMIT 7"),
                 array(),
                 DBPlugin::SQL_QUERY_ALL)
             )
@@ -101,7 +101,7 @@ class BlogRss extends Page
         }
 
 	if (null !== $mem) {
-	    $key = md5('fmb_blog_rss_'.$type);
+	    $key = md5('fmb_blog_rss_'.$type.$full);
 	    $mem->set($key, $items, null, 12*60*60);
 	}
 
