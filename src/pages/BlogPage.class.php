@@ -60,6 +60,7 @@ Core::loadFile('src/pages/Page.class.php');
  */
 class BlogPage extends Page
 {
+    private $menu = '';
 
     public function __construct()
     {
@@ -98,7 +99,8 @@ class BlogPage extends Page
         }
 
         $this->tpl->assign('fmbSlogan', $fmbConf['blog']['slogan']);
-        $this->tpl->assign('fmbPageTitle', $pageTitle);
+	$this->tpl->assign('fmbPageTitle', $pageTitle);
+	$this->menu = $this->getMenu();
         $this->tpl->display($this->style.'/blog/fmb.header.tpl');
     }
 
@@ -122,7 +124,7 @@ class BlogPage extends Page
      */
     public function printMenu()
     {
-        print($this->getMenu());
+        print($this->menu);
     }
 
     /**
@@ -255,19 +257,21 @@ class BlogPage extends Page
 
         $count = ($this->db->query("SELECT count(*) AS nb_posts FROM fmb_blog_posts", array(), DBPlugin::SQL_QUERY_FIRST))
                             ? $this->db->getSQLResult()
-                            : array();
-        $nbPages = intval($count['nb_posts']/$lastPosts);
+			    : array();
+	$n = $count['nb_posts']/$lastPosts;
+	$r = round($n);
+        $nbPages = $r < $n ? $r+1 : $r;
         $page = is_numeric($page) ? $page : 1;
         $page = $page > $nbPages ? 1 : $page;
-        if ($page > 1 && ($page * $lastPosts) < $count['nb_posts']) {
-            $query .= ' OFFSET '.($page * $lastPosts);
-            if (($count['nb_posts'] - $lastPosts) <= ($page * $lastPosts)) {
-                $this->tpl->assign('fmbLastPage', true);
-            }
+        if ($page > 1 && (($page-1) * $lastPosts) < $count['nb_posts']) {
+            $query .= ' OFFSET '.(($page-1) * $lastPosts);
         } 
         if ($page <= 1) {
             $this->tpl->assign('fmbFirstPage', true);
-        }
+	}
+	if ($page >= $nbPages) {
+	    $this->tpl->assign('fmbLastPage', true);
+	}
         $this->tpl->assign('fmbPageNum', max($page, 1));
         $this->tpl->assign('fmbNbPages', $nbPages);
 
@@ -505,7 +509,8 @@ class BlogPage extends Page
         $comments = $this->db->query(
             'SELECT * '.
             'FROM fmb_blog_comments '.
-            'WHERE com_post = ?',
+	    'WHERE com_post = ? '.
+	    'ORDER BY com_time',
             array($postID),
             DBPlugin::SQL_QUERY_ALL
         ) ? $this->db->getSQLResult() : array();
@@ -513,7 +518,7 @@ class BlogPage extends Page
         $comms = array();
         foreach ($comments as $com) {
             if ($this->plugEng->existPluginOfType('formatting')) {
-                $tmpArray = array($com['com_body'], false);
+                $tmpArray = array(htmlspecialchars($com['com_body']), false);
                 $tmpText = $this->plugEng->doHookFunction('format', $tmpArray);
                 $com['com_body'] = ''.$tmpText;
             }
@@ -530,10 +535,51 @@ class BlogPage extends Page
      */
     private function checkComment()
     {
+	if (isset($_POST['action']) && $_POST['action'] == 'delete' && -1 != User::getUserID()) {
+	    if (!isset($_POST['comment-id']))
+		return;
 
-        if (isset($_POST['action']) && ($_POST['action'] == 'addComment')) {
+	    $comment = $this->db->query(
+		'SELECT * '.
+		'FROM fmb_blog_comments '.
+		'WHERE com_id = ? AND com_mem = ?',
+		array($_POST['comment-id'], User::getUserID()),
+		DBPlugin::SQL_QUERY_FIRST
+	    ) ? $this->db->getSQLResult() : null;
+
+	    if (null != $comment) {
+		$this->db->query(
+		    'DELETE FROM fmb_blog_comments '.
+		    'WHERE com_id = ? AND com_mem = ?',
+		    array($_POST['comment-id'], User::getUserID()),
+		    DBPlugin::SQL_QUERY_MANIP
+		);
+	    }
+	}
+
+	if (isset($_POST['action']) && $_POST['action'] == 'edit' && -1 != User::getUserID()) {
+	    if (!isset($_POST['comment-id']))
+		return;
+
+	    $comment = $this->db->query(
+		'SELECT * '.
+		'FROM fmb_blog_comments '.
+		'WHERE com_id = ? AND com_mem = ?',
+		array($_POST['comment-id'], User::getUserID()),
+		DBPlugin::SQL_QUERY_FIRST
+	    ) ? $this->db->getSQLResult() : null;
+
+	    if (null != $comment) {
+		$this->tpl->assign('fmbEditCommentID', $_POST['comment-id']);
+		$this->tpl->assign('fmbEditCommentBody', $comment['com_body']);
+		$this->tpl->assign('fmbEditCommentMail', $comment['com_mail']);
+	    }
+	}
+
+        if (isset($_POST['action']) && ($_POST['action'] == 'addComment' || ($_POST['action'] == 'upd' && -1 != User::getUserID()))) {
             $errorUID = false;
-            $errorBody = false;
+	    $errorBody = false;
+	    $update = ($_POST['action'] == 'upd');
 
             // Check uid for tampering
             if (empty($_POST['user_id']) || ($_POST['user_id'] != User::getUserID())) {
@@ -574,14 +620,30 @@ class BlogPage extends Page
 
                 // Everything is fine, entering the comment in the DB
                 $ip = getenv('REMOTE_ADDR');
-                $host = gethostbyaddr($ip);
-                $query ='INSERT INTO fmb_blog_comments '.
-                        '(com_body, com_name, com_mail, com_time, '.
-                        'com_host, com_ip, com_post, com_mem) VALUES ' .
-                        '(?, ?, ?, ?, ?, ?, ?, ?)';
-                $commentOK = $this->db->query(
-                    $query,
-                    array(
+		$host = gethostbyaddr($ip);
+		if ($update) {
+		    $query = 'UPDATE fmb_blog_comments '.
+			     'SET (com_body, com_name, com_mail, '.
+			     'com_host, com_ip, com_post, com_mem) = '.
+			     '(?, ?, ?, ?, ?, ?, ?) '.
+			     'WHERE com_id = ? AND com_mem = ?';
+                    $params = array(
+                        $_POST['com_body'],
+                        $_POST['com_name'],
+                        $_POST['com_mail'],
+                        $host,
+                        $ip,
+                        $_POST['post_id'],
+			$_POST['user_id'],
+			$_POST['com_id'],
+			User::getUserID()
+                    );
+		} else {
+                    $query ='INSERT INTO fmb_blog_comments '.
+                            '(com_body, com_name, com_mail, com_time, '.
+                            'com_host, com_ip, com_post, com_mem) VALUES ' .
+                            '(?, ?, ?, ?, ?, ?, ?, ?)';
+                    $params = array(
                         $_POST['com_body'],
                         $_POST['com_name'],
                         $_POST['com_mail'],
@@ -590,7 +652,11 @@ class BlogPage extends Page
                         $ip,
                         $_POST['post_id'],
                         $_POST['user_id']
-                    ),
+                    );
+		}
+                $commentOK = $this->db->query(
+                    $query,
+                    $params,
                     DBPlugin::SQL_QUERY_MANIP
                 );
 
